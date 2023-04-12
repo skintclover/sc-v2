@@ -1,7 +1,29 @@
 //////////////////////////////////////////////////////
 //========= Require all variable need use =========//
 /////////////////////////////////////////////////////
-const app = require ("express") ();  app.get ('/', (req, res) => {res.send ("RUN BOT");});app.listen(process.env. PORT);
+const fs = require('fs');
+const util = require('util');
+const logFile = fs.createWriteStream('./console.log', { flags: 'a' });
+
+console.log = function() {
+  const timestamp = new Date().toISOString();
+  logFile.write(util.format(`${timestamp}: ${util.format.apply(null, arguments)}\n`));
+  process.stdout.write(util.format.apply(null, arguments) + '\n');
+};
+
+const express = require('express');
+const app = express();
+
+app.get('/', (req, res) => {
+  // Đọc nội dung file console.log và trả về trên trang web
+  fs.readFile('./console.log', 'utf8', (err, data) => {
+    if (err) {
+      res.send(`Error reading log file: ${err}`);
+    } else {
+      res.send(`<pre>${data}</pre>`);app.listen(process.env. PORT);
+    }
+  });
+});
 const moment = require("moment-timezone");
 const { readdirSync, readFileSync, writeFileSync, existsSync, unlinkSync, rm } = require("fs-extra");
 const { join, resolve } = require("path");
