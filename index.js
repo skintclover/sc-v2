@@ -24,13 +24,21 @@ const logger = require("./utils/log");
 
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const port = process.env.PORT || 8080;
 
 // sendFile will go here
-app.get('/', function(req, res) {
-  res.sendFile(path.join(__dirname, '/index.html'));
+app.get('/', (req, res) => {
+  // Đọc nội dung file console.log và trả về trên trang web
+  fs.readFile('./console.log', 'utf8', (err, data) => {
+    if (err) {
+      res.send(`Error reading log file: ${err}`);
+    } else {
+      res.send(`<pre>${data}</pre>`);
+    }
+  });
 });
 
 app.listen(port);
